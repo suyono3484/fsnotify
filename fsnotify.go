@@ -60,6 +60,11 @@ const (
 	// get triggered very frequently by some software. For example, Spotlight
 	// indexing on macOS, anti-virus software, backup software, etc.
 	Chmod
+
+	// File close with writes or no write
+	// non-portable, Linux only
+	CloseWrite
+	CloseNoWrite
 )
 
 // Common errors that can be reported.
@@ -86,6 +91,12 @@ func (o Op) String() string {
 	if o.Has(Chmod) {
 		b.WriteString("|CHMOD")
 	}
+	if o.Has(CloseWrite) {
+		b.WriteString("|CLOSE_WRITE")
+	}
+	if o.Has(CloseNoWrite) {
+		b.WriteString("|CLOSE_NO_WRITE")
+	}
 	if b.Len() == 0 {
 		return "[no events]"
 	}
@@ -100,7 +111,7 @@ func (e Event) Has(op Op) bool { return e.Op.Has(op) }
 
 // String returns a string representation of the event with their path.
 func (e Event) String() string {
-	return fmt.Sprintf("%-13s %q", e.Op.String(), e.Name)
+	return fmt.Sprintf("%-17s %q", e.Op.String(), e.Name)
 }
 
 type (
